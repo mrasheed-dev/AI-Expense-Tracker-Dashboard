@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Expense Tracker</title>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"><i class="fa-solid fa-wallet"></i></div>
+                <h2>Aura<span>Finance</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fa-solid fa-list-ul"></i> Transactions</a></li>
+                <li><a href="#"><i class="fa-solid fa-bullseye"></i> Goals</a></li>
+                <li><a href="#"><i class="fa-solid fa-robot"></i> AI Insights</a></li>
+                <li><a href="#" id="export-btn"><i class="fa-solid fa-file-export"></i> Export CSV</a></li>
+            </ul>
+            <div class="sidebar-bottom">
+                <button class="upgrade-btn">
+                    <i class="fa-solid fa-crown"></i> Pro Upgrade
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header>
+                <div class="header-left">
+                    <h1>Overview</h1>
+                    <p>Welcome back! Here's your financial summary.</p>
+                </div>
+                <div class="header-right">
+                    <button class="action-btn" id="sync-btn" title="Cloud Sync">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Synced</span>
+                    </button>
+                    <button class="action-btn theme-toggle" id="theme-toggle" title="Toggle Theme">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <div class="user-profile">
+                        <img src="https://i.pravatar.cc/150?img=68" alt="User Profile">
+                        <div class="user-info">
+                            <span class="user-name">Alex M.</span>
+                            <span class="user-plan">Free Plan</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Overview Cards -->
+            <section class="overview-cards">
+                <div class="card glass-effect total-balance">
+                    <div class="card-icon"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="card-details">
+                        <p>Total Balance</p>
+                        <h2 id="total-balance">$0.00</h2>
+                    </div>
+                </div>
+                <div class="card glass-effect income-card">
+                    <div class="card-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                    <div class="card-details">
+                        <p>Monthly Income</p>
+                        <h2 id="total-income">$0.00</h2>
+                    </div>
+                </div>
+                <div class="card glass-effect expense-card">
+                    <div class="card-icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
+                    <div class="card-details">
+                        <p>Monthly Expense</p>
+                        <h2 id="total-expense">$0.00</h2>
+                    </div>
+                </div>
+                <div class="card glass-effect savings-card">
+                    <div class="card-header-flex">
+                        <p>Savings Goal ($5000)</p>
+                        <button id="edit-goal-btn"><i class="fa-solid fa-pen"></i></button>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="savings-progress" style="width: 0%;"></div>
+                    </div>
+                    <p class="progress-text" id="savings-text">0% Achieved</p>
+                </div>
+            </section>
+
+            <!-- Main Layout Grid -->
+            <section class="dashboard-grid">
+                
+                <!-- Left Column (Charts & AI) -->
+                <div class="grid-left">
+                    <!-- Charts Row -->
+                    <div class="charts-container">
+                        <div class="chart-box glass-effect">
+                            <h3><i class="fa-solid fa-chart-simple"></i> Cash Flow</h3>
+                            <div class="canvas-container">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-box glass-effect">
+                            <h3><i class="fa-solid fa-chart-pie"></i> Expenses by Category</h3>
+                            <div class="canvas-container">
+                                <canvas id="pieChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights -->
+                    <div class="ai-insights glass-effect">
+                        <div class="ai-header">
+                            <h3><i class="fa-solid fa-robot"></i> AI Financial Advisor</h3>
+                            <span class="ai-status">Active</span>
+                        </div>
+                        <div class="ai-content" id="ai-suggestion-box">
+                            <div class="ai-loading">
+                                <div class="spinner"></div>
+                                <p>Analyzing spending patterns...</p>
+                            </div>
+                            <p class="ai-text hidden" id="ai-text"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column (Forms & List) -->
+                <div class="grid-right">
+                    <!-- Add Transaction Form -->
+                    <div class="transaction-form-container glass-effect">
+                        <h3>Add New Transaction</h3>
+                        <form id="transaction-form">
+                            <div class="form-group">
+                                <label>Type</label>
+                                <div class="radio-group">
+                                    <input type="radio" id="type-expense" name="type" value="expense" checked>
+                                    <label for="type-expense" class="radio-btn expense-btn">Expense</label>
+                                    
+                                    <input type="radio" id="type-income" name="type" value="income">
+                                    <label for="type-income" class="radio-btn income-btn">Income</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="amount">Amount ($)</label>
+                                <input type="number" id="amount" placeholder="0.00" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <select id="category" required>
+                                    <option value="" disabled selected>Select Category</option>
+                                    <option value="Food & Dining">Food & Dining</option>
+                                    <option value="Housing">Housing</option>
+                                    <option value="Transportation">Transportation</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                    <option value="Shopping">Shopping</option>
+                                    <option value="Utilities">Utilities</option>
+                                    <option value="Salary">Salary</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="date">Date</label>
+                                <input type="date" id="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="notes">Notes (Optional)</label>
+                                <input type="text" id="notes" placeholder="E.g., Groceries at Walmart">
+                            </div>
+                            <button type="submit" class="submit-btn">Add Transaction</button>
+                        </form>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="recent-transactions glass-effect">
+                        <div class="section-header">
+                            <h3>Recent Transactions</h3>
+                            <a href="#" class="view-all">View All</a>
+                        </div>
+                        <ul class="transaction-list" id="transaction-list">
+                            <!-- Transactions injected via JS -->
+                        </ul>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="goal-modal" class="modal hidden">
+        <div class="modal-content glass-effect">
+            <span class="close-modal">&times;</span>
+            <h2>Set Savings Goal</h2>
+            <div class="form-group">
+                <label for="goal-amount">Target Amount ($)</label>
+                <input type="number" id="goal-amount" placeholder="5000" step="100">
+            </div>
+            <button id="save-goal-btn" class="submit-btn">Save Goal</button>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
